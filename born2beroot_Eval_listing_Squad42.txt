@@ -1,0 +1,96 @@
+lsb_release -a || cat/etc/os-release 		: Check quel operteur systeme tu as choisi(Debian)
+   ou
+   	cat/etc/os-release			: Affichées le system d'exploitation ; sa version ...
+ssh raveriss@127.0.0.1 -p 4243 			: Se connecter depuis le terminal
+whoami 						: Verifie si on est connecter en tant que root
+sudo chage -l raveriss 				: Mdp appliquer ex: date de creation quand le modifier etc..
+sudo ufw status					: Status(active ou absent) de ufw
+sudo systemctl status ssh 			: Check si le service ssh est operationnel
+sudo groups raveriss 				: Groupes dans lesquels se trouve raveriss
+cat /etc/passwd | cut -d: -f1			: Liste tout les utilisateur present sur la machine
+sudo adduser omisev 				: Creer un utilisateur omisev
+	userdel -r omisev			: Supprimer omisev ainsi que ces dossier
+getent group sudo 				: Liste des utilisateurs present dans le groupe sudo
+sudo vim /etc/pam.d/common-password 		: Regles du mdp
+getent group					: Liste tout les groups present dans la machine
+sudo groupadd evaluating 			: Creation du groupe evaluating
+	groupdel evaluating 			: Supprimer le groupe evaluating
+sudo usermod -aG evaluating omisev 		: Attribue a omisev le group evaluating
+	sudo gpasswd -d omisev evaluating 	: Enlève omisev du groupe evaluating
+getent group evaluating 			: Liste des utilisateurs present dans le groupe evaluating
+hostname 					: Nom de l'hote de la machine
+   ou
+	hostnamectl 				: Nom d'hote ; systeme d'exploitation ; noyau ; architecture ...
+sudo hostnamectl set-hostname omisev42 		: Changer le hostname en omisev42
+sudo reboot 					: Relancer la machine
+sudo hostnamectl set-hostname raveriss42 	: Changer le hostname en raveriss42
+sudo reboot 					: Relancer la machine
+lsblk 						: Partition
+dpkg -l | grep sudo 				: Status(actif ou absent) de sudo
+	"ii" signifie que le paquet "sudo" est "installé" et "actif"
+sudo usermod -aG sudo omisev 			: Ajout omisev au groupe sudo
+	sudo visudo 				: Définit les utilisateurs autorisés à utiliser les droits sudo
+		fichier cible
+				cd ~/../
+				cd ..
+				cd var/log
+				sudo nano /etc/sudoers
+sudo service ufw status 			: Status(active ou absent) de ufw
+sudo ufw status 				: Affiche les autorisations pour les ports
+sudo ufw allow 8080 				: Ajouter une autorisation pour le port 8080
+   ou
+	ufw allow 8080/tcp
+sudo ufw delete <number> 			: supprime l'autorisation du port
+sudo nano /etc/ssh/sshd_config 			: Affiche les ports ayant la configuration SSH
+   ou
+	sudo service ssh status 		: Status(active ou absent) de SSH
+ssh raveriss84@127.0.0.1 -p 4243 		: Se connecter depuis le terminal
+	Devrait apparaitre comme autorisation refusee
+Afficher le script monitoring
+	soit
+		cd /usr/local/bin
+		nano monitoring.sh
+	ou
+	  	vim monitoring.sh
+sudo systemctl is-enabled cron 			: Status(enable ou disabled) du démarrer automatiquement au démarrage de cron
+sudo crontab -u root -e 			: Pour editer le ficher cron
+sudo systemctl is-active cron 			: Status(active ou inactive) de cron
+sudo service cron stop 				: Arreter le processus cron
+sudo service cron start 			: Demarrer le processus cron
+sudo reboot 					: redemarre la VM
+sudo crontab -u root -e 			: ouvre le fichier crontab root dans un éditeur de texte pour modification.
+ 		: chemin d'acces du script
+
+------------------------------------------------------------------------------------------------------------------------------
+
+Explication du scrypt monitoring.sh :
+
+L’architecture du système d’exploitation ainsi que sa version de kernel.
+     uname -srvmo
+Le nombre de processeurs physiques.
+      grep 'physical id' /proc/cpuinfo | uniq | wc -l
+Le nombre de processeurs virtuels.
+      grep processor /proc/cpuinfo | uniq | wc -l
+La mémoire vive disponible actuelle sur le serveur ainsi que son taux d’utilisation sous forme de pourcentage.
+      Utilisé : free -h | grep Mem | awk '{print $3}'
+      Total : free -h | grep Mem | awk '{print $2}'
+      Pourcentage : free -k | grep Mem | awk '{printf("%.2f%%"), $3 / $2 * 100}'
+La mémoire disponible actuelle sur le serveur ainsi que son taux d’utilisation sous forme de pourcentage.
+      Utilisé : df -h --total | grep total | awk '{print $3}'
+      Total : df -h --total | grep total | awk '{print $2}'
+      Pourcentage : df -k --total | grep total | awk '{print $5}'
+Le taux d’utilisation actuel des processeurs sous forme de pourcentage.
+      top -bn1 | grep '^%Cpu' | cut -c 9- | xargs | awk '{printf("%.1f%%"), $1 + $3}'
+La date et l’heure du dernier redémarrage.
+      who -b | awk '{print($3 " " $4)}'
+Si LVM est actif ou pas.
+       if [ $(lsblk | grep lvm | wc -l) -eq 0 ]; then echo no; else echo yes; fi
+Le nombre de connexions actives.
+       grep TCP /proc/net/sockstat | awk '{print $3}'
+Le nombre d’utilisateurs utilisant le serveur.
+       who | wc -l
+L’adresse IPv4 du serveur, ainsi que son adresse MAC (Media Access Control).
+        IP : hostname -I | awk '{print $1}'
+        MAC : ip link show | grep link/ether | awk '{print $2}'
+Le nombre de commandes exécutées avec le programme sudo.
+        grep COMMAND /var/log/sudo/sudo.log | wc -l

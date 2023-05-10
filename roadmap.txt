@@ -1,0 +1,262 @@
+new password:
+ymarcais 
+Debian vs Rocky :1515
+
+root
+Debian vs Rocky :1515
+
+
+https://www.codequoi.com/born2beroot-01-creer-une-machine-virtuelle-debian/
+
+Debian vs Rocky :1515
+I choose Debian for its for its stability, security, and large software repository.
+It is also more simple to use and settle and it get public licence.
+It's free
+
+
+checksum tool: Cryptographically Verifying authenticity of Debian images.
+
+Install virtualbox : https://web.archive.org/web/20220508112710/https://www.virtualbox.org/
+Debian picture : https://web.archive.org/web/20220508112710/https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/
+
+root : ymarcais42
+mot de pass superutilisateur : 1234
+
+nouvel utilisateur : ymarcais
+mot de pass ymarcais : 123
+
+mot de pass de chiffrement: tOTOALAPLAGE
+
+Partitionner pertmet de proteger le system si l une des partition etait corrompue
+
+LVM: Logical Volume Manager
+
+boot: contient le fichier static du demarage
+root: contient le repertoir personnel du superutilisateur root
+home: contient les repertoirs personnels utilisateurs
+swap: partition d echange qui sert d espace de travail du system d exploitation.
+Il permet d’avoir autant de partitions qu’il nous faut et de les redimensionner, 
+de les déplacer et même de les geler au besoin, sans avoir à redémarrer la machine. 
+
+
+3 partitions : sda1, sda2, sda5
+
+APT est le programme de gestion de paquets en mode invite de commande fourni avec 
+le paquet apt de Debian. APT récupère, configure et installe les dépendances automatiquement. 
+apt install aptitude : pour lancer l install d apt
+
+ptitude est une interface à APT, le gestionnaire de paquets debian. Il offre une interface utilisateur
+graphique permettant de sélectionner les paquets à installer ou à supprimer.
+
+SELinux: Security-Enhanced Linux,est un Linux security module (LSM) qui permet de définir une politique d
+contrôle d'accès obligatoire aux éléments d'un système issu de Linux.
+Il permet notamment de classer les applications d'un système en différents groupes,
+avec des niveaux d'accès plus fins.
+
+AppArmo: AppArmor (Application Armor) est un logiciel de sécurité pour Linux édité sous
+Licence publique générale GNU. 
+ppArmor a été créé en partie comme une alternative à SELinux, critiqué pour être 
+difficile à paramétrer et à maintenir par les administrateurs. 
+À la différence de SELinux, qui s'appuie sur l'application d'indicateurs 
+aux fichiers, AppArmor travaille avec les chemins
+
+exit ou logout: termine la cession
+
+su autre_login: : se connecter en tant qu’un autre utilisateur. On nous demandera alors le mot de passe de l’autre utilisateur.
+su: (switch user) sans préciser d’utilisateur nous permettra de se connecter en tant que l’utilisateur par defaut, root.
+
+systemctl reboot : redémarre le système (permissions root requises)
+systemctl poweroff : éteint le système (permissions root requises)
+
+apt install aptitude
+
+apt update    // met à jour la liste des paquets disponibles
+apt upgrade   // met à jour les paquets
+
+sudo (super-user do, ou « super-utilisateur, fais … ») est un programme qui permet à certains utilisateurs d’exécuter 
+certaines commandes en tant que root, depuis leur propre session. 
+
+donner à notre utilisateur normal la permission d’utiliser sudo en
+l’ajoutant au groupe sudo
+# sudo usermod -aG sudo [mon_login]
+# getent group sudo
+
+sudo whoami: Pour vérifier qu’on a bien maintenant les privilèges sudo, 
+on peut exit la session root pour retourner à notre propre session, 
+puis faire la commande.
+
+
+si l’utilisateur n’a toujours pas les privilèges sudo après une déconnexion/reconnexion, il faudra modifier le fichier sudoers.tmp depuis le root avec les commandes suivantes :
+
+$ su
+# sudo visudo
+Code language: Shell Session (shell)
+Et ajouter cette ligne au fichier :
+
+mon_login   ALL=(ALL:ALL) ALL
+
+###########3
+
+sudo apt install ufw :  Avec UFW, on va pouvoir définir des règles qui gouvernent les autorisations 
+                        et les interdictions port par port. Installons et lançons UFW 
+sudo ufw enable: 
+
+sudo ufw status verbose : érifier le statut d’UFW et celui des ports avec la commande :
+
+#####
+par défaut, la règle pour le trafic sortant (outgoing) est autorisée. 
+Si on interdit cette regle par default avec la commande ci-dessous, 
+le gestionnaire de paquets et autres programmes essentiels cessent 
+de fonctionner correctement :
+$ sudo ufw default deny outgoing
+$ sudo apt update
+$ sudo ufw default allow outgoing
+
+#########
+Port :  pour ajouter ou supprimer un port:
+$ sudo ufw allow 4242
+$ sudo ufw deny 4242
+pour supprimer une regle
+$ sudo ufw delete allow 4242
+$ sudo ufw delete deny 4343
+ou supprimer avec les indices
+$ sudo ufw status numbered
+$ sudo ufw delete 2
+
+ssh ymarcais@127.0.0.1 -p 4243
+
+####
+Configurer OpenSSH pour Born2beroot
+sudo apt update
+$ sudo apt upgrade
+$ sudo apt install openssh-server
+
+Donne le status
+$ sudo systemctl status ssh
+
+$ sudo nano /etc/ssh/sshd_config // et on peut modifier Port en
+ supprimant '#' et remplacant 22 par 4242
+
+ $ sudo systemctl restart ssh // restart
+ $ sudo ufw allow 4242
+$ sudo delete allow ssh  #Pour supprimer la règle port 22
+
+## Dans virtualbox
+réseau -> Adapter 1 -> Avancé -> Redirection de ports. 
+Puis on va rediriger le port hôte 4242 -> port invite 4242
+
+### Mot de passe
+Pour configurer les 3 premières règles, 
+on doit modifier le fichier /etc/login.defs :
+
+$ sudo nano /etc/login.defs
+
+Et trouver la section « Password aging controls » pour en changer les valeurs tels que :
+
+PASS_MAX_DAYS 30
+PASS_MIN_DAYS 2
+PASS_WARN_AGE 7
+
+Cependant, ces changements ne s’appliqueront pas automatiquement aux utilisateurs qui existent déjà. Pour root et pour notre utilisateur, on va devoir utiliser la commande chage pour imposer ces règles. On peut utiliser le flag -l pour voir les règles appliquées à un certain utilisateur.
+
+$ sudo chage -M 30 <utilisateur>
+$ sudo chage -M 30 <root>
+$ sudo chage -m 2 <utilisateur>
+$ sudo chage -m 2 <root>
+$ sudo chage -W 7 <utilisateur>
+$ sudo chage -W 7 <root>
+$ sudo chage -l <root>
+$ sudo chage -l <utilisateur>
+
+Ensuite, on doit modifier le fichier /etc/security/pwquality.conf en supprimant la marque de mise en commentaire (#) et en changeant les valeurs associées aux options, pour avoir quelque chose comme ceci :
+
+# Number of characters in the new password that must not be present in the 
+# old password.
+difok = 7
+# The minimum acceptable size for the new password (plus one if 
+# credits are not disabled which is the default)
+minlen = 10
+# The maximum credit for having digits in the new password. If less than 0 
+# it is the minimun number of digits in the new password.
+dcredit = -1
+# The maximum credit for having uppercase characters in the new password. 
+# If less than 0 it is the minimun number of uppercase characters in the new 
+# password.
+ucredit = -1
+# ...
+# The maximum number of allowed consecutive same characters in the new password.
+# The check is disabled if the value is 0.
+maxrepeat = 3
+# ...
+# Whether to check it it contains the user name in some form.
+# The check is disabled if the value is 0.
+usercheck = 1
+# ...
+# Prompt user at most N times before returning with error. The default is 1.
+retry = 3
+# Enforces pwquality checks on the root user password.
+# Enabled if the option is present.
+enforce_for_root
+h
+#pour changer le passwd utilisateur
+$ sudo passwd <utilisateur>
+
+A faire #####Hostname, utilisateurs et groupes###
+
+#Changement de hostname
+$ sudo hostnamectl set-hostname <nouveau_hostname>
+$ hostnamectl status
+
+useradd : crée un nouvel utilisateur.
+usermod : modifie les paramètres de l’utilisateur :
+        *   pour le login --login <nouveau> <ancien>
+#???        *   pour le nom entier -c  --comment
+        *   pour les groupes par numéro d’identification de groupe -g (sudo usermod -g 1000 bill)
+            enverra bill dans le groupe 1000
+
+userdel -r : supprime l’utilisateur et tout ses fichiers.
+id -u : affiche le numéro d’identification de l’utilisateur.
+users : montre une liste de tous les utilisateurs connectés à l’instant.-f 
+cat /etc/passwd | cut -d ":" -f 1 : affiche la liste de tous les utilisateurs sur la machine.
+cat /etc/passwd | awk -F '{print $1}' : idem.
+
+#Manipulation des groupes
+
+groupadd <group>: crée un nouveau groupe.
+gpasswd --a <user> <group>: ajoute un utilisateur à un groupe.
+gpasswd -d <user> <group>: enlève un utilisateur d’un groupe.
+groupdel  <group>: supprime un groupe.
+groups <user>: affiche les groupes dans lesquels se trouve un utilisateur.
+id -g <user>: montre le numéro d’identification du groupe principal d’un utilisateur.
+getent group : affiche la liste des utilisateurs dans un groupe.
+
+# Commande wall
+wall "message"
+wall -n "message" : affichage sans bandeau
+
+La commande wall est celle qui permet d’envoyer un message à tous 
+les utilisateurs à la fois, qui s’affiche dans tous les terminaux. 
+Elle peut recevoir soit du texte, soit le contenu d’un fichier. 
+Par défaut, elle préfixe l’annonce d’un bandeau. 
+
+# Le service Cron
+
+Cron (ou crontab, chrono table, qui signifie « table de planification »)
+est un programme qui permet d’exécuter des scripts, des commandes ou des
+logiciels automatiquement, à une date et heure ou un intervalle spécifié.
+Il est installé par défaut dans Debian (on peut vérifier avec la commande 
+apt list cron). 
+Il faut d’abord l’activer pour être certains qu’il se lance au démarrage :
+
+systemctl enable cron
+
+
+apt list cron
+
+Cron utilise des fichiers crontab pour planifier les tâches. 
+Chaque utilisateur peut en avoir un ou plusieurs. 
+
+crontab -e
+
+
+# Créer un délai avec sleep
