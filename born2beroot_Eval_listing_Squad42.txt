@@ -1,47 +1,50 @@
-lsb_release -a || cat/etc/os-release 		: Check quel operteur systeme tu as choisi(Debian)
+hostnamectl || cat/etc/os-release         : Check quel operteur systeme tu as choisi(Debian)
+lsb_release -a || cat/etc/os-release 	: Check quel operteur systeme tu as choisi(Debian)
    ou
    	cat/etc/os-release			: Affichées le system d'exploitation ; sa version ...
 ssh raveriss@127.0.0.1 -p 4243 			: Se connecter depuis le terminal
 whoami 						: Verifie si on est connecter en tant que root
-sudo chage -l raveriss 				: Mdp appliquer ex: date de creation quand le modifier etc..
+sudo chage -l ymarcais 				: Mdp appliquer ex: date de creation quand le modifier etc..
 sudo ufw status					: Status(active ou absent) de ufw
 sudo systemctl status ssh 			: Check si le service ssh est operationnel
 sudo groups raveriss 				: Groupes dans lesquels se trouve raveriss
 cat /etc/passwd | cut -d: -f1			: Liste tout les utilisateur present sur la machine
-sudo adduser omisev 				: Creer un utilisateur omisev
-	userdel -r omisev			: Supprimer omisev ainsi que ces dossier
+sudo adduser <toto> 				: Creer un utilisateur toto
+	userdel -r <totsudo adduser o>			      : Supprimer toto ainsi que ces dossier
 getent group sudo 				: Liste des utilisateurs present dans le groupe sudo
-sudo vim /etc/pam.d/common-password 		: Regles du mdp
+sudo vim /etc/pam.d/common-password sud		: Regles du mdp
 getent group					: Liste tout les groups present dans la machine
-sudo groupadd evaluating 			: Creation du groupe evaluating
-	groupdel evaluating 			: Supprimer le groupe evaluating
-sudo usermod -aG evaluating omisev 		: Attribue a omisev le group evaluating
-	sudo gpasswd -d omisev evaluating 	: Enlève omisev du groupe evaluating
+sudo groupadd <evaluating>			: Creation du groupe evaluating
+	groupdel <evaluating>			: Supprimer le groupe evaluating
+sudo usermod -aG <evaluating> <omisev> 		: Attribue a omisev le group evaluating
+sudo gpasswd -d <omisev> <evaluating>     : Enlève omisev du groupe evaluating
 getent group evaluating 			: Liste des utilisateurs present dans le groupe evaluating
-hostname 					: Nom de l'hote de la machine
+hostname 					      : Nom de l'hote de la machine
    ou
 	hostnamectl 				: Nom d'hote ; systeme d'exploitation ; noyau ; architecture ...
-sudo hostnamectl set-hostname omisev42 		: Changer le hostname en omisev42
+sudo hostnamectl set-hostname ymarcais42 		: Changer le hostname en ymarcais
 sudo reboot 					: Relancer la machine
 sudo hostnamectl set-hostname raveriss42 	: Changer le hostname en raveriss42
 sudo reboot 					: Relancer la machine
 lsblk 						: Partition
 dpkg -l | grep sudo 				: Status(actif ou absent) de sudo
 	"ii" signifie que le paquet "sudo" est "installé" et "actif"
-sudo usermod -aG sudo omisev 			: Ajout omisev au groupe sudo
+sudo usermod -aG sudo ymarcais 			: Ajout ymarcais au groupe sudo
 	sudo visudo 				: Définit les utilisateurs autorisés à utiliser les droits sudo
 		fichier cible
 				cd ~/../
 				cd ..
 				cd var/log
 				sudo nano /etc/sudoers
+sudo aa-status                            : verifie que AppArmor est bien installe
 sudo service ufw status 			: Status(active ou absent) de ufw
-sudo ufw status 				: Affiche les autorisations pour les ports
+sudo ufw status 				      : Affiche les autorisations pour les ports
 sudo ufw allow 8080 				: Ajouter une autorisation pour le port 8080
    ou
 	ufw allow 8080/tcp
-sudo ufw delete <number> 			: supprime l'autorisation du port
-sudo nano /etc/ssh/sshd_config 			: Affiche les ports ayant la configuration SSH
+sudo ufw delete allow <number> 			: supprime l'autorisation du port
+sudo nano /etc/login.defs                  : trois premieres regles passwd     
+sudo nano /etc/ssh/sshd_config 	sud		: Affiche les ports ayant la configuration SSH
    ou
 	sudo service ssh status 		: Status(active ou absent) de SSH
 ssh raveriss84@127.0.0.1 -p 4243 		: Se connecter depuis le terminal
@@ -60,10 +63,6 @@ sudo service cron start 			: Demarrer le processus cron
 sudo reboot 					: redemarre la VM
 sudo crontab -u root -e 			: ouvre le fichier crontab root dans un éditeur de texte pour modification.
  		: chemin d'acces du script
-
-------------------------------------------------------------------------------------------------------------------------------
-
-Explication du scrypt monitoring.sh :
 
 L’architecture du système d’exploitation ainsi que sa version de kernel.
      uname -srvmo
@@ -94,3 +93,12 @@ L’adresse IPv4 du serveur, ainsi que son adresse MAC (Media Access Control).
         MAC : ip link show | grep link/ether | awk '{print $2}'
 Le nombre de commandes exécutées avec le programme sudo.
         grep COMMAND /var/log/sudo/sudo.log | wc -l
+
+
+VBoxManage showhdinfo Born2beroot.vdi
+
+ssh -p 4243 ymarcais@localhost 'cat > /home/ymarcais/bud.jpeg' < /mnt/nfs/homes/ymarcais/Pictures/bud.jpeg  // 
+will send jpeg file from pc to VM
+
+scp -P 4243 /mnt/nfs/homes/ymarcais/Pictures/gordon.jpeg ymarcais@localhost:/home/ymarcais/  // send with scp file from pc to VM
+

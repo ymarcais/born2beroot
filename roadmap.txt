@@ -157,7 +157,8 @@ PASS_MAX_DAYS 30
 PASS_MIN_DAYS 2
 PASS_WARN_AGE 7
 
-Cependant, ces changements ne s’appliqueront pas automatiquement aux utilisateurs qui existent déjà. Pour root et pour notre utilisateur, on va devoir utiliser la commande chage pour imposer ces règles. On peut utiliser le flag -l pour voir les règles appliquées à un certain utilisateur.
+Cependant, ces changements ne s’appliqueront pas automatiquement aux utilisateurs qui existent déjà. Pour root et pour notre utilisateur, 
+on va devoir utiliser la commande chage pour imposer ces règles. On peut utiliser le flag -l pour voir les règles appliquées à un certain utilisateur.
 
 $ sudo chage -M 30 <utilisateur>
 $ sudo chage -M 30 <root>
@@ -213,12 +214,16 @@ usermod : modifie les paramètres de l’utilisateur :
 #???        *   pour le nom entier -c  --comment
         *   pour les groupes par numéro d’identification de groupe -g (sudo usermod -g 1000 bill)
             enverra bill dans le groupe 1000
+usermod  -aG <group> <username>
 
 userdel -r : supprime l’utilisateur et tout ses fichiers.
 id -u : affiche le numéro d’identification de l’utilisateur.
 users : montre une liste de tous les utilisateurs connectés à l’instant.-f 
-cat /etc/passwd | cut -d ":" -f 1 : affiche la liste de tous les utilisateurs sur la machine.
+c | cut -d ":" -f 1 : affiche la liste de tous les utilisateurs sur la machine.
 cat /etc/passwd | awk -F '{print $1}' : idem.
+
+requiretty : est une option de configuration qui s assure que le fichier log peut interagir 
+        avec un terminal
 
 #Manipulation des groupes
 
@@ -260,3 +265,14 @@ crontab -e
 
 
 # Créer un délai avec sleep
+
+
+
+The command $(uname -srvmo) in the context of VirtualBox monitoring is used to display the system information of the host operating system. Let's break down the command:
+
+    uname is a command in Unix-like operating systems that stands for "Unix name". It is used to retrieve system information about the kernel and the operating system.
+    The -s option stands for "kernel name" and prints the kernel name.
+    The -r option stands for "kernel release" and prints the kernel release version.
+    The -v option stands for "kernel version" and prints the kernel version.
+    The -m option stands for "machine hardware name" and prints the machine hardware name or architecture.
+    The -o option stands for "operating system" and prints the operating system name.
